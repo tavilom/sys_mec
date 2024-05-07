@@ -51,6 +51,12 @@ class Mecanica:
             messagebox.showinfo("Resultado da Pesquisa", f"Nome: {resultado[0]}\nModelo do carro: {resultado[1]}")
         else:
             messagebox.showinfo("Resultado da Pesquisa", "Cliente não encontrado com esta placa de carro.")
+            
+    def listar_clientes(self):
+        self.cursor.execute("SELECT nome, modelo_carro, placa_carro FROM clientes")
+        clientes = self.cursor.fetchall()
+        return clientes
+
 
     def gerar_orcamento(self, item, placa_carro, mao_obra, valor):
         # Verificar se a placa do carro existe na tabela de clientes
@@ -67,6 +73,42 @@ class Mecanica:
             messagebox.showinfo("Sucesso", "Orçamento gerado com sucesso!")
         else:
             messagebox.showerror("Erro", "Placa do carro não encontrada.")
+            
+
+    def ver_orcamento(self):
+        # Obter os orçamentos do banco de dados
+        self.cursor.execute("SELECT * FROM orcamentos")
+        return self.cursor.fetchall()
+    
+    def obter_orcamento(self, placa_carro):
+        # Consulta o banco de dados para obter o orçamento com base na placa do carro
+        sql = "SELECT * FROM orcamentos WHERE placa_carro = %s"
+        self.cursor.execute(sql, (placa_carro,))
+        orcamento = self.cursor.fetchone()
+        if orcamento:
+            return {
+                'item': orcamento[1],
+                'placa_carro': orcamento[2],
+                'mao_obra': orcamento[3],
+                'valor_total': orcamento[4]
+            }
+        else:
+            return None
+        
+        
+    def apagar_orcamento(self, id_orcamento):
+        # Exclui o orçamento com base no ID fornecido
+        sql = "DELETE FROM orcamentos WHERE id = %s"
+        self.cursor.execute(sql, (id_orcamento,))
+        self.conexao.commit()
+
+    def editar_orcamento(self, id_orcamento, item, placa_carro, mao_obra, valor):
+        # Atualiza os detalhes do orçamento com base no ID fornecido
+        sql = "UPDATE orcamentos SET item = %s, placa_carro = %s, mao_obra = %s, valor = %s WHERE id = %s"
+        valores = (item, placa_carro, mao_obra, valor, id_orcamento)
+        self.cursor.execute(sql, valores)
+        self.conexao.commit()
+
 
     def fechar_conexao(self):
         self.conexao.close()

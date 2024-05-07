@@ -26,8 +26,8 @@ class PesquisaCliente:
 
         if resultado:
             messagebox.showinfo("Resultado da Pesquisa", f"Nome: {resultado[0]}\nModelo do Carro: {resultado[1]}")
-        else:
-            messagebox.showinfo("Resultado da Pesquisa", "Cliente não encontrado.")
+        # else:
+        #     messagebox.showinfo("Resultado da Pesquisa", "Cliente não encontrado.")
 
 if __name__ == "__main__":
     pesquisa_cliente = PesquisaCliente()
