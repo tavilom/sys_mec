@@ -8,10 +8,10 @@ from ver_orcamento import VerOrcamento  # Importe a classe VerOrcamento
 class MainApp:
     def __init__(self):
         self.root = tk.Tk()
-        self.root.title("Sistema de Cadastro de Clientes")
+        self.root.title("F & S CAR")
 
         # Definindo os widgets da janela principal
-        self.titulo_label = tk.Label(self.root, text="Sistema de Cadastro de Clientes", font=("Helvetica", 16))
+        self.titulo_label = tk.Label(self.root, text="F & S CAR Mecânica automotiva", font=("Helvetica", 16))
         self.titulo_label.pack(pady=10)
 
         self.cadastro_button = tk.Button(self.root, text="Cadastro de Clientes", command=self.abrir_cadastro_clientes)

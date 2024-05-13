@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox
 import mysql.connector
+from datetime import datetime
 
 class Mecanica:
     def __init__(self):
@@ -32,7 +33,8 @@ class Mecanica:
                                 item VARCHAR(255),
                                 placa_carro VARCHAR(255),
                                 mao_obra DECIMAL(10, 2),
-                                valor DECIMAL(10, 2)
+                                valor DECIMAL(10, 2),
+                                data DATE
                               )""")
         self.conexao.commit()
 
@@ -66,8 +68,9 @@ class Mecanica:
 
         if cliente:
             # Inserir o orçamento na tabela de orçamentos
-            query = "INSERT INTO orcamentos (item, placa_carro, mao_obra, valor) VALUES (%s, %s, %s, %s)"
-            valores = (item, placa_carro, mao_obra, valor)
+            data_atual = datetime.now().date()
+            query = "INSERT INTO orcamentos (item, placa_carro, mao_obra, valor, data) VALUES (%s, %s, %s, %s, %s)"
+            valores = (item, placa_carro, mao_obra, valor, data_atual)
             self.cursor.execute(query, valores)
             self.conexao.commit()
             messagebox.showinfo("Sucesso", "Orçamento gerado com sucesso!")
@@ -82,25 +85,28 @@ class Mecanica:
     
     def obter_orcamento(self, placa_carro):
         # Consulta o banco de dados para obter o orçamento com base na placa do carro
-        sql = "SELECT * FROM orcamentos WHERE placa_carro = %s"
+        sql = "SELECT item, placa_carro, mao_obra, valor, data FROM orcamentos WHERE placa_carro = %s"
         self.cursor.execute(sql, (placa_carro,))
         orcamento = self.cursor.fetchone()
         if orcamento:
             return {
-                'item': orcamento[1],
-                'placa_carro': orcamento[2],
-                'mao_obra': orcamento[3],
-                'valor_total': orcamento[4]
-            }
+            'item': orcamento[0],
+            'placa_carro': orcamento[1],
+            'mao_obra': orcamento[2],
+            'valor_total': orcamento[3],
+            'data': orcamento[4]  # Certifique-se de incluir a coluna 'data' aqui
+        }
         else:
             return None
+
         
         
-    def apagar_orcamento(self, id_orcamento):
-        # Exclui o orçamento com base no ID fornecido
-        sql = "DELETE FROM orcamentos WHERE id = %s"
-        self.cursor.execute(sql, (id_orcamento,))
+    def apagar_orcamento_por_placa(self, placa_carro):
+    # Excluir o orçamento com base na placa do carro
+        sql = "DELETE FROM orcamentos WHERE placa_carro = %s"
+        self.cursor.execute(sql, (placa_carro,))
         self.conexao.commit()
+
 
     def editar_orcamento(self, id_orcamento, item, placa_carro, mao_obra, valor):
         # Atualiza os detalhes do orçamento com base no ID fornecido
